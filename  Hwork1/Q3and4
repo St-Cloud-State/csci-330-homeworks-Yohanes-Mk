@@ -1,0 +1,44 @@
+Script started on 2025-01-24 08:14:59+00:00 [TERM="xterm-256color" TTY="/dev/pts/0" COLUMNS="95" LINES="24"]
+[0;32m@Yohanes-Mk [0m➜ [1;34m/workspaces/csci-330-homeworks-Yohanes-Mk [0;36m([1;31mmain[0;36m) [0m$ exitsbclexitsbcl
+This is SBCL 1.4.3, an implementation of ANSI Common Lisp.
+More information about SBCL is available at <http://www.sbcl.org/>.
+
+SBCL is free software, provided as is, with absolutely no warranty.
+It is mostly in the public domain; some portions are provided under
+BSD-style licenses.  See the CREDITS and COPYING files in the
+distribution for more information.
+* ;; Question 3(a): Extract X from (a b x d) 
+(CAR (CDR (CDR '(a b x d))))
+
+X
+* ;; Question 3(b): Extract X from (a (b (x d)))
+(CAR (CAR (CDR (CAR (CDR '(a (b (x d))))))))
+
+X
+* ;; Question 3(c): Extract X from (((a (b (x) d))))
+(CAR (CADR (CADR (CAAR '((( a (b (x) d))))))))
+
+X
+* ;; Question 4(a): Construct (a b x d)
+(cons 'a (cons 'b (cons 'x (cons 'd nil))))
+
+(A B X D)
+* (setf (readtable-case *readtable*) :invert)
+
+:invert
+* (cons 'a (cons 'b (cons 'x (cons 'd nil))))
+
+(a b x d)
+* Question 4(b): Construct (a (b (x d)))                                      ;; Question 4(b): Construct (a (b (x d)))
+(cons 'a (cons (cons 'b (cons (cons 'x (cons 'd nil)) nil)) nil))
+
+(a (b (x d)))
+* ;; Question 4(c): Construct (((a (b (x) d))))
+(cons (cons (cons 'a (cons (cons 'b (cons (cons 'x nil) (cons 'd nil))) nil)) nil) nil)
+
+(((a (b (x) d))))
+* (quit)
+[0;32m@Yohanes-Mk [0m➜ [1;34m/workspaces/csci-330-homeworks-Yohanes-Mk [0;36m([1;31mmain[0;36m) [0m$ exit
+exit
+
+Script done on 2025-01-24 08:19:09+00:00 [COMMAND_EXIT_CODE="0"]
