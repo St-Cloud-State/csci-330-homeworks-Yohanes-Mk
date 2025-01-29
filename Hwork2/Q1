@@ -1,0 +1,407 @@
+Script started on 2025-01-29 03:48:44+00:00 [TERM="xterm-256color" TTY="/dev/pts/0" COLUMNS="146" LINES="36"]
+[0;32m@Yohanes-Mk [0m➜ [1;34m/workspaces/csci-330-homeworks-Yohanes-Mk/Hwork2 [0;36m([1;31mmain[0;36m) [0m$ sbcl
+This is SBCL 1.4.3, an implementation of ANSI Common Lisp.
+More information about SBCL is available at <http://www.sbcl.org/>.
+
+SBCL is free software, provided as is, with absolutely no warranty.
+It is mostly in the public domain; some portions are provided under
+BSD-style licenses.  See the CREDITS and COPYING files in the
+distribution for more information.
+* ;; -------------------------------
+;; Question 3.1 - Evaluating Expression
+;; -------------------------------
+;; (ABS -3) computes the absolute value of -3, which is 3.
+;; (EQUAL 3 3) checks if 3 equals 3, returning T (true).
+;; (NOT T) negates T, giving NIL (false).
+(NOT (EQUAL 3 (ABS -3)))  ;; Expected Answer: NIL
+
+NIL
+* ;; -------------------------------
+;; Question 3.2 - Arithmetic Expression
+;; -------------------------------
+;; This expression adds 8 and 12, then divides the sum by 2.
+(/ (+ 8 12) 2)  ;; Expected Answer: 10
+
+10
+* ;; -------------------------------
+;; Question 3.3 - Squaring and Summing
+;; -------------------------------
+;; This expression squares 3 and 4 separately, then adds the results.
+(+ (* 3 3) (* 4 4))  ;; Expected Answer: 25
+
+;; Alternative approach us
+25
+* ing EXPT (exponentiation function)
+(+ (EXPT 3 2) (EXPT 4 2))  ;; Expected Answer: 25
+
+25
+* ;; -------------------------------
+;; Question 3.7 - Defining Function for Miles Per Gallon
+;; -------------------------------
+;; This function calculates miles per gallon by subtracting 
+;; the initial odometer reading from the final reading 
+;; and dividing by the number of gallons consumed.
+(DEFUN miles-per-gallon (initial-odometer final-odometer gallons-consumed)
+  (/ (- final-odometer initial-odometer) gallons-consumed))
+
+;; Testing function
+MILES-PER-GALLON
+* :
+(miles-per-gallon 1000 1200 10)  ;; Expected Answer: 20
+
+20
+* ;; -------------------------------
+;; Question 3.10 - Running Incorrect Versions (Expect Errors)
+;; -------------------------------
+
+;; This will cause an error because THE is treated as an undefined function.
+(third (the quick brown fox))
+; in: THIRD (THE QUICK BROWN FOX)
+;     (THE QUICK BROWN FOX)
+; 
+; caught ERROR:
+;   error while parsing arguments to special operator THE:
+;     too many elements in
+;       (QUICK BROWN FOX)
+;     to satisfy lambda list
+;       (SB-C::VALUE-TYPE SB-KERNEL:FORM):
+;     exactly 2 expected, but got 3
+; 
+; compilation unit finished
+;   caught 1 ERROR condition
+
+debugger invoked on a SB-INT:COMPILED-PROGRAM-ERROR in thread
+#<THREAD "main thread" RUNNING {9461061}>:
+  Execution of a form compiled with errors.
+Form:
+  (THE QUICK BROWN FOX)
+Compile-time error:
+  error while parsing arguments to special operator THE:
+  too many elements in
+    (QUICK BROWN FOX)
+  to satisfy lambda list
+    (SB-C::VALUE-TYPE SB-KERNEL:FORM):
+  exactly 2 expected, but got 3
+
+Type HELP for debugger help, or (SB-EXT:EXIT) to exit from SBCL.
+
+restarts (invokable by number or by possibly-abbreviated name):
+  0: [ABORT] Exit debugger, returning to top level.
+
+((LAMBDA ()))
+   source: (THE QUICK BROWN FOX)
+0] ;; Fix: Quote the entire list to treat THE as a symbol.
+(third '(the quick brown fox))  ;; Expected Answer: BROWN
+
+BROWN
+0] ;; This will cause an error because AND is treated as a variable.
+(list 2 and 2 is 4)
+; in: THIRD (THE QUICK BROWN FOX)
+;     (LIST 2 AND 2 IS 4)
+; 
+; caught WARNING:
+;   undefined variable: AND
+; 
+; caught WARNING:
+;   undefined variable: IS
+; 
+; compilation unit finished
+;   Undefined variables:
+;     AND IS
+;   caught 2 WARNING conditions
+
+debugger invoked on a UNBOUND-VARIABLE in thread
+#<THREAD "main thread" RUNNING {9461061}>:
+  The variable AND is unbound.
+
+Type HELP for debugger help, or (SB-EXT:EXIT) to exit from SBCL.
+
+restarts (invokable by number or by possibly-abbreviated name):
+  0: [ABORT] Reduce debugger level (to debug level 1).
+  1:         Exit debugger, returning to top level.
+
+((LAMBDA (#:G390)) #<unused argument>)
+   source: (LIST 2 AND 2 IS 4)
+0[2] ;; Fix: Quote non-numeric symbols (AND, IS).
+(list 2 'and 2 'is 4)  ;; Expected Answer: (2 AND 2 IS 4)
+
+(2 AND 2 IS 4)
+0[2] ;; This will cause an error because LENGTH is passed a quoted list.
+(+ 1 '(length (list t t t t)))
+; in: THIRD (THE QUICK BROWN FOX)
+;     (+ 1 '(LENGTH (LIST T T T T)))
+; 
+; caught WARNING:
+;   Constant (LENGTH (LIST T T T T)) conflicts with its asserted type NUMBER.
+;   See also:
+;     The SBCL Manual, Node "Handling of Types"
+; 
+; compilation unit finished
+;   caught 1 WARNING condition
+
+debugger invoked on a SIMPLE-TYPE-ERROR in thread
+#<THREAD "main thread" RUNNING {9461061}>:
+  Value of '(LENGTH (LIST T T T T)) in
+  (+ 1 '(LENGTH (LIST T T T T)))
+  is
+    (LENGTH (LIST T T T T)),
+  not a
+    NUMBER.
+
+Type HELP for debugger help, or (SB-EXT:EXIT) to exit from SBCL.
+
+restarts (invokable by number or by possibly-abbreviated name):
+  0: [ABORT] Reduce debugger level (to debug level 2).
+  1:         Reduce debugger level (to debug level 1).
+  2:         Exit debugger, returning to top level.
+
+(SB-C::%COMPILE-TIME-TYPE-ERROR ((LENGTH (LIST T T T T))) NUMBER #<unused argument> ((QUOTE (LENGTH (LIST T T T T)))) "(+ 1 '(LENGTH (LIST T T T T)))" NIL)
+0[3] ;; Fix: Remove the quote from LENGTH so it evaluates properly.
+(+ 1 (length (list t t t t)))  ;; Expected Answer: 5
+
+5
+0[3] ;; This will cause an error because SEYMOUR is treated as an undefined function.
+(cons 'patrick (seymour marvin))
+; in: THIRD (THE QUICK BROWN FOX)
+;     (SEYMOUR MARVIN)
+; 
+; caught WARNING:
+;   undefined variable: MARVIN
+; 
+; caught STYLE-WARNING:
+;   undefined function: SEYMOUR
+; 
+; compilation unit finished
+;   Undefined function:
+;     SEYMOUR
+;   Undefined variable:
+;     MARVIN
+;   caught 1 WARNING condition
+;   caught 1 STYLE-WARNING condition
+
+debugger invoked on a UNBOUND-VARIABLE in thread
+#<THREAD "main thread" RUNNING {9461061}>:
+  The variable MARVIN is unbound.
+
+Type HELP for debugger help, or (SB-EXT:EXIT) to exit from SBCL.
+
+restarts (invokable by number or by possibly-abbreviated name):
+  0: [ABORT] Reduce debugger level (to debug level 3).
+  1:         Reduce debugger level (to debug level 2).
+  2:         Reduce debugger level (to debug level 1).
+  3:         Exit debugger, returning to top level.
+
+((LAMBDA (#:G394)) #<unused argument>)
+   source: (SEYMOUR MARVIN)
+0[4] ;; Fix: Quote the entire list so SEYMOUR is treated as a symbol.
+(cons 'patrick '(seymour marvin))  ;; Expected Answer: (PATRICK SEYMOUR MARVIN)
+
+(PATRICK SEYMOUR MARVIN)
+0[4] ;; This will cause an error because SEYMOUR is not quoted inside LIST.
+(cons 'patrick (list seymour marvin))
+; in: THIRD (THE QUICK BROWN FOX)
+;     (LIST SEYMOUR MARVIN)
+; 
+; caught WARNING:
+;   undefined variable: MARVIN
+; 
+; caught WARNING:
+;   undefined variable: SEYMOUR
+; 
+; compilation unit finished
+;   Undefined variables:
+;     MARVIN SEYMOUR
+;   caught 2 WARNING conditions
+
+debugger invoked on a UNBOUND-VARIABLE in thread
+#<THREAD "main thread" RUNNING {9461061}>:
+  The variable SEYMOUR is unbound.
+
+Type HELP for debugger help, or (SB-EXT:EXIT) to exit from SBCL.
+
+restarts (invokable by number or by possibly-abbreviated name):
+  0: [ABORT] Reduce debugger level (to debug level 4).
+  1:         Reduce debugger level (to debug level 3).
+  2:         Reduce debugger level (to debug level 2).
+  3:         Reduce debugger level (to debug level 1).
+  4:         Exit debugger, returning to top level.
+
+((LAMBDA (#:G396)) #<unused argument>)
+   source: (LIST SEYMOUR MARVIN)
+0[5] ;; Fix: Quote SEYMOUR and MARVIN inside LIST.
+(cons 'patrick (list 'seymour 'marvin))  ;; Expected Answer: (PATRICK SEYMOUR MARVIN)
+
+(PATRICK SEYMOUR MARVIN)
+0[5] ;; -------------------------------
+;; Question 3.20 - Mystery Function
+;; -------------------------------
+
+;; Define the mystery function
+(defun mystery (x)
+  (list (second x) (first x)))
+
+;; Testing 
+MYSTERY
+0[5] the function with different inputs
+
+;; Case 1: A two-element list (Expected: (bear dancing))
+(mystery '(dancing bear))  ;; Expected Answer: (BEAR DANCING)
+
+;; Case 2: Providing two separate arguments 
+(BEAR DANCING)
+0[5] instead of a list (Expected: Error!)
+(mystery 'dancing 'bear)  ;; Expected Error: Too many arguments.
+
+;; Case 3: A single-element list (Expected: (NI; in: THIRD (THE QUICK BROWN FOX)
+;     (MYSTERY 'DANCING 'BEAR)
+; 
+; caught STYLE-WARNING:
+;   The function was called with two arguments, but wants exactly one.
+; 
+; compilation unit finished
+;   caught 1 STYLE-WARNING condition
+
+debugger invoked on a SB-INT:SIMPLE-PROGRAM-ERROR in thread
+#<THREAD "main thread" RUNNING {9461061}>:
+  invalid number of arguments: 2
+
+Type HELP for debugger help, or (SB-EXT:EXIT) to exit from SBCL.
+
+restarts (invokable by number or by possibly-abbreviated name):
+  0: [ABORT] Reduce debugger level (to debug level 5).
+  1:         Reduce debugger level (to debug level 4).
+  2:         Reduce debugger level (to debug level 3).
+  3:         Reduce debugger level (to debug level 2).
+  4:         Reduce debugger level (to debug level 1).
+  5:         Exit debugger, returning to top level.
+
+(MYSTERY DANCING BEAR) [external]
+   source: (DEFUN MYSTERY (X) (LIST (SECOND X) (FIRST X)))
+0[6] L ZOWIE))
+(mystery '(zowie))  ;; Expected Answer: (NIL ZOWIE) 
+;; Explanation: `SECOND` of a one-ele
+(NIL ZOWIE)
+0[6] ment list is NIL.
+
+;; Case 4: A list of symbols (Expected: (SECOND FIRST))
+(mystery (list 'first 'second))  ;; Expected Answer: (SECOND FIRST)
+
+(SECOND FIRST)
+0[6] ;; Case 4: A list of symbols (Expected: (SECOND FIRST))
+(mystery (list 'first 'second))  ;; Expected Answer: (SECOND FIRST)
+
+(SECOND FIRST)
+0[6] ;; -------------------------------
+;; Question 3.21 - Running Incorrect Versions (Expect Errors)
+;; -------------------------------
+
+;; This will cause an error because 'x and 'y should not be quoted.
+(defun speak (x y) (list 'all 'x 'is 'y))
+
+;; Thi; in: DEFUN SPEAK
+;     (DEFUN SPEAK (X Y) (LIST 'ALL 'X 'IS 'Y))
+; --> PROGN SB-IMPL::%DEFUN SB-INT:NAMED-LAMBDA 
+; ==>
+;   #'(SB-INT:NAMED-LAMBDA SPEAK
+;         (X Y)
+;       (BLOCK SPEAK (LIST 'ALL 'X 'IS 'Y)))
+; 
+; caught STYLE-WARNING:
+;   The variable X is defined but never used.
+; 
+; caught STYLE-WARNING:
+;   The variable Y is defined but never used.
+; 
+; compilation unit finished
+;   caught 2 STYLE-WARNING conditions
+SPEAK
+0[6] s will cause an error because (y) in the function body is incorrect.
+(defun speak (x) (y) (list 'all x 'is y))
+
+;; This will cause an error because ((; in: DEFUN SPEAK
+;     (LIST 'ALL X 'IS Y)
+; 
+; caught WARNING:
+;   undefined variable: Y
+
+;     (Y)
+; 
+; caught STYLE-WARNING:
+;   undefined function: Y
+; 
+; compilation unit finished
+;   Undefined function:
+;     Y
+;   Undefined variable:
+;     Y
+;   caught 1 WARNING condition
+;   caught 1 STYLE-WARNING condition
+WARNING: redefining COMMON-LISP-USER::SPEAK in DEFUN
+SPEAK
+0[6] x) (y)) should be (x y), and ALL should be quoted.
+(defun speak ((x) (y)) (list all 'x is 'y))
+; in: DEFUN SPEAK
+;     (DEFUN SPEAK ((X) (Y)) (LIST ALL 'X IS 'Y))
+; --> PROGN SB-IMPL::%DEFUN SB-INT:NAMED-LAMBDA 
+; ==>
+;   #'(SB-INT:NAMED-LAMBDA SPEAK
+;         ((X) (Y))
+;       (BLOCK SPEAK (LIST ALL 'X IS 'Y)))
+; 
+; caught ERROR:
+;   Required argument is not a symbol: (X)
+; 
+; compilation unit finished
+;   caught 1 ERROR condition
+
+debugger invoked on a SB-INT:COMPILED-PROGRAM-ERROR in thread
+#<THREAD "main thread" RUNNING {9461061}>:
+  Execution of a form compiled with errors.
+Form:
+  #'(SB-INT:NAMED-LAMBDA SPEAK
+      ((X) (Y))
+    (BLOCK SPEAK (LIST ALL 'X IS 'Y)))
+Compile-time error:
+  Required argument is not a symbol: (X)
+
+Type HELP for debugger help, or (SB-EXT:EXIT) to exit from SBCL.
+
+restarts (invokable by number or by possibly-abbreviated name):
+  0: [ABORT] Reduce debugger level (to debug level 6).
+  1:         Reduce debugger level (to debug level 5).
+  2:         Reduce debugger level (to debug level 4).
+  3:         Reduce debugger level (to debug level 3).
+  4:         Reduce debugger level (to debug level 2).
+  5:         Reduce debugger level (to debug level 1).
+  6:         Exit debugger, returning to top level.
+
+((LAMBDA (#:G406)) #<unused argument>)
+   source: (DEFUN SPEAK ((X) (Y)) (LIST ALL 'X IS 'Y))
+0[7] ;; -------------------------------
+;; Question 3.21 - Corrected Versions
+;; -------------------------------
+* ;; Corrected version: Ensuring proper function parameters and quoting.
+(defun speak (x y) (list 'all x 'is y))
+
+;; Testing the function:
+(speak 'john 
+SPEAK
+* 'smart)  ;; Expected Output: (ALL JOHN IS SMART)
+
+(ALL JOHN IS SMART)
+
+* ^Z
+[2]+  Stopped                 sbcl
+[0;32m@Yohanes-Mk [1;31m➜ [1;34m/workspaces/csci-330-homeworks-Yohanes-Mk/Hwork2 [0;36m([1;31mmain[0;36m) [0m$ exit
+exit
+There are stopped jobs.
+[0;32m@Yohanes-Mk [1;31m➜ [1;34m/workspaces/csci-330-homeworks-Yohanes-Mk/Hwork2 [0;36m([1;31mmain[0;36m) [0m$ 
+[K[0;32m@Yohanes-Mk [1;31m➜ [1;34m/workspaces/csci-330-homeworks-Yohanes-Mk/Hwork2 [0;36m([1;31mmain[0;36m) [0m$ 
+[K[0;32m@Yohanes-Mk [1;31m➜ [1;34m/workspaces/csci-330-homeworks-Yohanes-Mk/Hwork2 [0;36m([1;31mmain[0;36m) [0m$ 
+[K[0;32m@Yohanes-Mk [1;31m➜ [1;34m/workspaces/csci-330-homeworks-Yohanes-Mk/Hwork2 [0;36m([1;31mmain[0;36m) [0m$ 
+[K[0;32m@Yohanes-Mk [1;31m➜ [1;34m/workspaces/csci-330-homeworks-Yohanes-Mk/Hwork2 [0;36m([1;31mmain[0;36m) [0m$ 
+[K[0;32m@Yohanes-Mk [1;31m➜ [1;34m/workspaces/csci-330-homeworks-Yohanes-Mk/Hwork2 [0;36m([1;31mmain[0;36m) [0m$ 
+[K[0;32m@Yohanes-Mk [1;31m➜ [1;34m/workspaces/csci-330-homeworks-Yohanes-Mk/Hwork2 [0;36m([1;31mmain[0;36m) [0m$ 
+[K[0;32m@Yohanes-Mk [1;31m➜ [1;34m/workspaces/csci-330-homeworks-Yohanes-Mk/Hwork2 [0;36m([1;31mmain[0;36m) [0m$ 
+[K[0;32m@Yohanes-Mk [1;31m➜ [1;34m/workspaces/csci-330-homeworks-Yohanes-Mk/Hwork2 [0;36m([1;31mmain[0;36m) [0m$ 
+[K[0;
